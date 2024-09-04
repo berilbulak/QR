@@ -1,18 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-using AForge;
 using AForge.Video;
 using AForge.Video.DirectShow;
-using ZXing;
-using ZXing.Aztec;
 using System.Net.Http;
 using ClosedXML.Excel;
 using IronOcr;
@@ -26,11 +18,13 @@ namespace QR
         private bool hasRedirected ;
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly IronTesseract ocr = new IronTesseract();
+        private SqliteDataAccsess sqliteDataAccess;
 
         public Form1()
         {
             InitializeComponent();
-            
+            sqliteDataAccess = new SqliteDataAccsess();  
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -131,6 +125,14 @@ namespace QR
                             }
                         }
                     }
+                    
+                    var extractedText = PerformOCRWithIronTesseract(processedImage);
+                    string date = "2024-09-01"; // istenilenle değiştir
+                    string total = "100.00"; 
+                    string totalTax = "8.00"; 
+                    string saleReceiptNo = "123456"; 
+
+                    sqliteDataAccess.InsertOCRData(date, total, totalTax, saleReceiptNo);
                 }
             }
             catch (Exception ex)
