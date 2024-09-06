@@ -24,7 +24,7 @@ namespace QR
         //method oluşturuldu
         void KullaniciGetir()
         {
-            baglanti = new SqlConnection("server=.;initial Catalog=ticaret;Integrated Security=SSPI");
+            baglanti = new SqlConnection("Data Source=LAPTOP-1GSMFA97\\SQLEXPRESS;Initial Catalog=ticaret;Integrated Security=True;Trust Server Certificate=True");
             baglanti.Open();
             da = new SqlDataAdapter("SELECT *FROM fis", baglanti) ;
             DataTable tablo = new DataTable();
@@ -35,6 +35,8 @@ namespace QR
 
         private void Form3_Load(object sender, EventArgs e)
         {
+            // TODO: Bu kod satırı 'ticaretDataSet.fis' tablosuna veri yükler. Bunu gerektiği şekilde taşıyabilir, veya kaldırabilirsiniz.
+            this.fisTableAdapter.Fill(this.ticaretDataSet.fis);
             KullaniciGetir();
         }
 

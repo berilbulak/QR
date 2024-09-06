@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
@@ -44,7 +45,18 @@
             this.textBox5 = new System.Windows.Forms.TextBox();
             this.textBox6 = new System.Windows.Forms.TextBox();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.ticaretDataSet = new QR.ticaretDataSet();
+            this.fisBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.fisTableAdapter = new QR.ticaretDataSetTableAdapters.fisTableAdapter();
+            this.idDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.nameDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dateDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.totalDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.totalTaxDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.saleReceiptNoDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ticaretDataSet)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fisBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -69,13 +81,22 @@
             // 
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.AutoGenerateColumns = false;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.idDataGridViewTextBoxColumn,
+            this.nameDataGridViewTextBoxColumn,
+            this.dateDataGridViewTextBoxColumn,
+            this.totalDataGridViewTextBoxColumn,
+            this.totalTaxDataGridViewTextBoxColumn,
+            this.saleReceiptNoDataGridViewTextBoxColumn});
+            this.dataGridView1.DataSource = this.fisBindingSource;
             this.dataGridView1.Location = new System.Drawing.Point(37, 272);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersWidth = 51;
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(739, 166);
+            this.dataGridView1.Size = new System.Drawing.Size(805, 166);
             this.dataGridView1.TabIndex = 2;
             // 
             // textBox1
@@ -187,11 +208,79 @@
             this.dateTimePicker1.Size = new System.Drawing.Size(220, 22);
             this.dateTimePicker1.TabIndex = 16;
             // 
+            // ticaretDataSet
+            // 
+            this.ticaretDataSet.DataSetName = "ticaretDataSet";
+            this.ticaretDataSet.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema;
+            // 
+            // fisBindingSource
+            // 
+            this.fisBindingSource.DataMember = "fis";
+            this.fisBindingSource.DataSource = this.ticaretDataSet;
+            // 
+            // fisTableAdapter
+            // 
+            this.fisTableAdapter.ClearBeforeFill = true;
+            // 
+            // idDataGridViewTextBoxColumn
+            // 
+            this.idDataGridViewTextBoxColumn.DataPropertyName = "id";
+            this.idDataGridViewTextBoxColumn.HeaderText = "id";
+            this.idDataGridViewTextBoxColumn.MinimumWidth = 6;
+            this.idDataGridViewTextBoxColumn.Name = "idDataGridViewTextBoxColumn";
+            this.idDataGridViewTextBoxColumn.ReadOnly = true;
+            this.idDataGridViewTextBoxColumn.Width = 125;
+            // 
+            // nameDataGridViewTextBoxColumn
+            // 
+            this.nameDataGridViewTextBoxColumn.DataPropertyName = "name";
+            this.nameDataGridViewTextBoxColumn.HeaderText = "name";
+            this.nameDataGridViewTextBoxColumn.MinimumWidth = 6;
+            this.nameDataGridViewTextBoxColumn.Name = "nameDataGridViewTextBoxColumn";
+            this.nameDataGridViewTextBoxColumn.ReadOnly = true;
+            this.nameDataGridViewTextBoxColumn.Width = 125;
+            // 
+            // dateDataGridViewTextBoxColumn
+            // 
+            this.dateDataGridViewTextBoxColumn.DataPropertyName = "date";
+            this.dateDataGridViewTextBoxColumn.HeaderText = "date";
+            this.dateDataGridViewTextBoxColumn.MinimumWidth = 6;
+            this.dateDataGridViewTextBoxColumn.Name = "dateDataGridViewTextBoxColumn";
+            this.dateDataGridViewTextBoxColumn.ReadOnly = true;
+            this.dateDataGridViewTextBoxColumn.Width = 125;
+            // 
+            // totalDataGridViewTextBoxColumn
+            // 
+            this.totalDataGridViewTextBoxColumn.DataPropertyName = "total";
+            this.totalDataGridViewTextBoxColumn.HeaderText = "total";
+            this.totalDataGridViewTextBoxColumn.MinimumWidth = 6;
+            this.totalDataGridViewTextBoxColumn.Name = "totalDataGridViewTextBoxColumn";
+            this.totalDataGridViewTextBoxColumn.ReadOnly = true;
+            this.totalDataGridViewTextBoxColumn.Width = 125;
+            // 
+            // totalTaxDataGridViewTextBoxColumn
+            // 
+            this.totalTaxDataGridViewTextBoxColumn.DataPropertyName = "total tax";
+            this.totalTaxDataGridViewTextBoxColumn.HeaderText = "total tax";
+            this.totalTaxDataGridViewTextBoxColumn.MinimumWidth = 6;
+            this.totalTaxDataGridViewTextBoxColumn.Name = "totalTaxDataGridViewTextBoxColumn";
+            this.totalTaxDataGridViewTextBoxColumn.ReadOnly = true;
+            this.totalTaxDataGridViewTextBoxColumn.Width = 125;
+            // 
+            // saleReceiptNoDataGridViewTextBoxColumn
+            // 
+            this.saleReceiptNoDataGridViewTextBoxColumn.DataPropertyName = "sale receipt no";
+            this.saleReceiptNoDataGridViewTextBoxColumn.HeaderText = "sale receipt no";
+            this.saleReceiptNoDataGridViewTextBoxColumn.MinimumWidth = 6;
+            this.saleReceiptNoDataGridViewTextBoxColumn.Name = "saleReceiptNoDataGridViewTextBoxColumn";
+            this.saleReceiptNoDataGridViewTextBoxColumn.ReadOnly = true;
+            this.saleReceiptNoDataGridViewTextBoxColumn.Width = 125;
+            // 
             // Form3
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(905, 450);
             this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.textBox6);
             this.Controls.Add(this.textBox5);
@@ -212,6 +301,8 @@
             this.Text = "Form3";
             this.Load += new System.EventHandler(this.Form3_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ticaretDataSet)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.fisBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -235,5 +326,14 @@
         private System.Windows.Forms.TextBox textBox5;
         private System.Windows.Forms.TextBox textBox6;
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
+        private ticaretDataSet ticaretDataSet;
+        private System.Windows.Forms.BindingSource fisBindingSource;
+        private ticaretDataSetTableAdapters.fisTableAdapter fisTableAdapter;
+        private System.Windows.Forms.DataGridViewTextBoxColumn idDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn nameDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dateDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn totalDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn totalTaxDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn saleReceiptNoDataGridViewTextBoxColumn;
     }
 }

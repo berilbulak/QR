@@ -8,6 +8,10 @@ using AForge.Video.DirectShow;
 using System.Net.Http;
 using ClosedXML.Excel;
 using IronOcr;
+using System.Threading.Tasks;
+using System.Security.Policy;
+using System.Diagnostics.Tracing;
+using IronSoftware.Drawing;
 
 namespace QR
 {
@@ -18,13 +22,16 @@ namespace QR
         private bool hasRedirected ;
         private readonly HttpClient _httpClient = new HttpClient();
         private readonly IronTesseract ocr = new IronTesseract();
-        private SqliteDataAccsess sqliteDataAccess;
+        private string targetUrl = "https://monitoring.e-kassa.gov.az/#/index?doc=BdcQ9LPwqcNy2gSyQYnpgRvodhY14c8ig1zvMjDMPzyx";
+        private string redirectUrl = "https://monitoring.e-kassa.gov.az/pks-monitoring/2.0.0/documents/BdcQ9LPwqcNy2gSyQYnpgRvodhY14c8ig1zvMjDMPzyx";
+        private bool isProcessingFrame = false;
+        private object eventArgs;
+        private AnyBitmap processedImage;
 
         public Form1()
         {
             InitializeComponent();
-            sqliteDataAccess = new SqliteDataAccsess();  
-
+            
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -32,7 +39,7 @@ namespace QR
             CaptureDevice = new FilterInfoCollection(FilterCategory.VideoInputDevice);
             if (CaptureDevice.Count == 0)
             {
-                MessageBox.Show("No video devices found.");
+                MessageBox.Show("Cihaz bulunamadı.");
                 return;
             }
             foreach (FilterInfo Device in CaptureDevice)
@@ -66,38 +73,48 @@ namespace QR
 
         private void FinalFrame_NewFrame(object sender, NewFrameEventArgs eventArgs)
         {
-            try
+            if (!isProcessingFrame)
             {
-                
-                    pictureBox1.Image?.Dispose();
-                
-
-                using (Bitmap frame = (Bitmap)eventArgs.Frame.Clone())
+                try
                 {
-                    pictureBox1.Image = new Bitmap(frame);
-                }
 
-                
-                
-                    ProcessQRCodeOrBarcode();
-                
+                    pictureBox1.Image?.Dispose();
+
+
+                    using (Bitmap frame = (Bitmap)eventArgs.Frame.Clone())
+                    {
+                        pictureBox1.Image = new Bitmap(frame);
+                    }
+
+
+
+                    Task.Run(() => ProcessQRCodeOrBarcodeAsync());
+
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Görüntülenirken bir hata oluştu: " + ex.Message);
+                }
+                finally
+                {
+                    isProcessingFrame = false; // İşlem bitti
+                }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Görüntülenirken bir hata oluştu: " + ex.Message);
-            }
+            
         }
 
-        private string targetUrl = "https://monitoring.e-kassa.gov.az/#/index?doc=BdcQ9LPwqcNy2gSyQYnpgRvodhY14c8ig1zvMjDMPzyx";
-        private string redirectUrl = "https://monitoring.e-kassa.gov.az/pks-monitoring/2.0.0/documents/BdcQ9LPwqcNy2gSyQYnpgRvodhY14c8ig1zvMjDMPzyx";
-
-        private void ProcessQRCodeOrBarcode()
+        private async Task ProcessQRCodeOrBarcodeAsync()
         {
             if (pictureBox1.Image == null)
             {
                 return;
             }
-            Bitmap processedImage = new Bitmap(pictureBox1.Image);
+
+            Bitmap processedImage;
+            lock (pictureBox1.Image)
+            {
+                processedImage = new Bitmap(pictureBox1.Image);
+            }
 
             try
             {
@@ -110,7 +127,7 @@ namespace QR
                     {
                         foreach (var barcode in result.Barcodes)
                         {
-                            textBox1.Text = barcode.Value;
+                            Invoke(new Action(() => textBox1.Text = barcode.Value));
 
                             if (barcode.Value.Equals(targetUrl, StringComparison.OrdinalIgnoreCase) && !hasRedirected)
                             {
@@ -121,18 +138,10 @@ namespace QR
                                 });
 
                                 hasRedirected = true;
-                                ProcessImageFromWeb("https://monitoring.e-kassa.gov.az/pks-monitoring/2.0.0/documents/BdcQ9LPwqcNy2gSyQYnpgRvodhY14c8ig1zvMjDMPzyx", @"C:\path\to\output.xlsx");
+                                await ProcessImageFromWebAsync(redirectUrl, @"C:\path\to\output.xlsx");
                             }
                         }
                     }
-                    
-                    var extractedText = PerformOCRWithIronTesseract(processedImage);
-                    string date = "2024-09-01"; // istenilenle değiştir
-                    string total = "100.00"; 
-                    string totalTax = "8.00"; 
-                    string saleReceiptNo = "123456"; 
-
-                    sqliteDataAccess.InsertOCRData(date, total, totalTax, saleReceiptNo);
                 }
             }
             catch (Exception ex)
@@ -145,29 +154,19 @@ namespace QR
             }
         }
 
-
-
-        private void ProcessImageFromWeb(string imageUrl, string excelFilePath)
+        private async Task ProcessImageFromWebAsync(string imageUrl, string excelFilePath)
         {
-            // Resmi indir
-            Bitmap image = DownloadImage(imageUrl);
-
-            // Resmi OCR ile işle
+            Bitmap image = await DownloadImageAsync(imageUrl);
             string extractedText = PerformOCRWithIronTesseract(image);
-
-
-            // Çıktıyı Excel dosyasına yaz
             WriteToExcel(extractedText, excelFilePath);
         }
 
-      
-
-        private Bitmap DownloadImage(string url)
+        private async Task<Bitmap> DownloadImageAsync(string url)
         {
-            var response = _httpClient.GetAsync(url).Result;
+            var response = await _httpClient.GetAsync(url);
             response.EnsureSuccessStatusCode();
 
-            using (Stream stream = response.Content.ReadAsStreamAsync().Result)
+            using (Stream stream = await response.Content.ReadAsStreamAsync())
             {
                 return (Bitmap)Image.FromStream(stream);
             }
@@ -176,16 +175,12 @@ namespace QR
 
         private string PerformOCRWithIronTesseract(Bitmap image)
         {
-            string extractedText = string.Empty;
-            {
-                using (var input = new OcrInput())
+               using (var input = new OcrInput())
                 {
                     input.LoadImage(image);
                     var result = ocr.Read(input);
-                    extractedText = result.Text;
-                }
+                    return result.Text;
             }
-            return extractedText;
         }
 
         private void WriteToExcel(string text, string filePath)
