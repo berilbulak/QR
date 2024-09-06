@@ -4,10 +4,14 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using System.Security.Cryptography;
+using System.Collections.Generic;
+
 
 namespace QR
 {
@@ -20,8 +24,10 @@ namespace QR
 
         private void button1_Click(object sender, EventArgs e)
         {
+
             string ka = textBox1.Text;
             string sifre = textBox2.Text;
+            textBox2.PasswordChar = '*';
 
             if (ka == "vlkn" && sifre == "123")
             {

@@ -10,7 +10,7 @@ using Microsoft.Data.Sqlite;
 
 namespace QR
 {
-    internal class SqliteDataAccsess
+    internal class SqliteDataAccsess 
     {
         private const string ConnectionString = "Data Source=OCRData.db";
 
@@ -25,7 +25,7 @@ namespace QR
             {
                 connection.Open();
 
-                string tableCommand = @"CREATE TABLE IF NOT EXISTS OCRData (
+                string tableCommand = @" OCRData (
                                         Id INTEGER PRIMARY KEY AUTOINCREMENT,
                                         Date TEXT NOT NULL,
                                         Total TEXT NOT NULL,
@@ -36,6 +36,8 @@ namespace QR
                 {
                     createTable.ExecuteNonQuery();
                 }
+
+                connection.Close();
             }
         }
 
@@ -56,6 +58,8 @@ namespace QR
 
                     command.ExecuteNonQuery();
                 }
+
+                connection.Close();
             }
         }
     }
